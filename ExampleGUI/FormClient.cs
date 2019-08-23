@@ -16,7 +16,7 @@ namespace ExampleGUI
 
         public FormClient()
         {
-            InitializeComponent();
+            InitializeComponent();//初始化
             Load += OnLoad;
         }
 

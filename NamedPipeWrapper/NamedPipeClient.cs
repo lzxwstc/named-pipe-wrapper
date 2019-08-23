@@ -10,9 +10,9 @@ using NamedPipeWrapper.Threading;
 namespace NamedPipeWrapper
 {
     /// <summary>
-    /// Wraps a <see cref="NamedPipeClientStream"/>.
+    /// Wraps(包装) a <see cref="NamedPipeClientStream"/>.
     /// </summary>
-    /// <typeparam name="TReadWrite">Reference type to read from and write to the named pipe</typeparam>
+    /// <typeparam name="TReadWrite">Reference type to read from and write to the named pipe(要从指定管道读写的引用类型)</typeparam>
     public class NamedPipeClient<TReadWrite> : NamedPipeClient<TReadWrite, TReadWrite> where TReadWrite : class
     {
         /// <summary>
@@ -42,7 +42,7 @@ namespace NamedPipeWrapper
         public bool AutoReconnect { get; set; }
 
         /// <summary>
-        /// Invoked whenever a message is received from the server.
+        /// Invoked whenever a message is received from the server.每当从服务器接收到消息时调用
         /// </summary>
         public event ConnectionMessageEventHandler<TRead, TWrite> ServerMessage;
 
@@ -77,12 +77,12 @@ namespace NamedPipeWrapper
         {
             _pipeName = pipeName;
             _serverName = serverName;
-            AutoReconnect = true;
+            AutoReconnect = true;//自动重连
         }
 
         /// <summary>
-        /// Connects to the named pipe server asynchronously.
-        /// This method returns immediately, possibly before the connection has been established.
+        /// Connects to the named pipe server asynchronously.异步连接到指定的管道服务器。
+        /// This method returns immediately, possibly before the connection has been established.此方法可能在建立连接之前立即返回
         /// </summary>
         public void Start()
         {
@@ -93,7 +93,7 @@ namespace NamedPipeWrapper
         }
 
         /// <summary>
-        ///     Sends a message to the server over a named pipe.
+        ///     Sends a message to the server over a named pipe.通过指定管道向服务器发送消息
         /// </summary>
         /// <param name="message">Message to send to the server.</param>
         public void PushMessage(TWrite message)
@@ -150,15 +150,15 @@ namespace NamedPipeWrapper
 
         private void ListenSync()
         {
-            // Get the name of the data pipe that should be used from now on by this NamedPipeClient
+            // Get the name of the data pipe that should be used from now on by this NamedPipeClient(获取从此以后应该由这个NamedPipeClient使用的数据管道的名称)
             var handshake = PipeClientFactory.Connect<string, string>(_pipeName,_serverName);
             var dataPipeName = handshake.ReadObject();
             handshake.Close();
 
-            // Connect to the actual data pipe
+            // Connect to the actual data pipe连接到实际的数据管道
             var dataPipe = PipeClientFactory.CreateAndConnectPipe(dataPipeName,_serverName);
 
-            // Create a Connection object for the data pipe
+            // Create a Connection object for the data pipe为数据管道创建连接对象
             _connection = ConnectionFactory.CreateConnection<TRead, TWrite>(dataPipe);
             _connection.Disconnected += OnDisconnected;
             _connection.ReceiveMessage += OnReceiveMessage;
@@ -223,8 +223,10 @@ namespace NamedPipeWrapper
             return pipe;
         }
 
-        private static NamedPipeClientStream CreatePipe(string pipeName,string serverName)
+        private static NamedPipeClientStream CreatePipe(string pipeName,string serverName)//创建client管道
         {
+            //Console.WriteLine(pipeName);
+            //Console.WriteLine(serverName);
             return new NamedPipeClientStream(serverName, pipeName, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.WriteThrough);
         }
     }

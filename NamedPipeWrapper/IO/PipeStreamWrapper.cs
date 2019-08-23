@@ -86,7 +86,7 @@ namespace NamedPipeWrapper.IO
         }
 
         /// <summary>
-        /// Reads the next object from the pipe.  This method blocks until an object is sent
+        /// Reads the next object from the pipe.  This method blocks until an object is sent从管道中读取下一个对象。此方法阻塞，直到发送对象为止
         /// or the pipe is disconnected.
         /// </summary>
         /// <returns>The next object read from the pipe, or <c>null</c> if the pipe disconnected.</returns>
@@ -97,7 +97,7 @@ namespace NamedPipeWrapper.IO
         }
 
         /// <summary>
-        /// Writes an object to the pipe.  This method blocks until all data is sent.
+        /// Writes an object to the pipe.  This method blocks until all data is sent.将对象写入管道。此方法阻塞，直到发送所有数据
         /// </summary>
         /// <param name="obj">Object to write to the pipe</param>
         /// <exception cref="SerializationException">An object in the graph of type parameter <typeparamref name="TRead"/> is not marked as serializable.</exception>
@@ -107,7 +107,7 @@ namespace NamedPipeWrapper.IO
         }
 
         /// <summary>
-        ///     Waits for the other end of the pipe to read all sent bytes.
+        ///     Waits for the other end of the pipe to read all sent bytes.等待管道的另一端读取所有发送的字节。
         /// </summary>
         /// <exception cref="ObjectDisposedException">The pipe is closed.</exception>
         /// <exception cref="NotSupportedException">The pipe does not support write operations.</exception>

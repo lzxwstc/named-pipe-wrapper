@@ -13,12 +13,17 @@ namespace ExampleCLI
         {
             if (args.Length >= 1 && string.Equals("/server", args[0], StringComparison.OrdinalIgnoreCase))
             {
+                Console.WriteLine(args);
                 Console.WriteLine("Running in SERVER mode");
                 Console.WriteLine("Press 'q' to exit");
                 new MyServer(DefaultPipeName);
             }
             else
             {
+                foreach(var i in args){
+                    Console.WriteLine(i);
+                }
+                
                 Console.WriteLine("Running in CLIENT mode");
                 Console.WriteLine("Press 'q' to exit");
                 new MyClient(DefaultPipeName);

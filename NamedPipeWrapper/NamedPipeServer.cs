@@ -3,6 +3,7 @@ using NamedPipeWrapper.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipes;
+using System.Diagnostics;
 
 namespace NamedPipeWrapper
 {
@@ -41,7 +42,7 @@ namespace NamedPipeWrapper
         where TWrite : class
     {
         /// <summary>
-        /// Invoked whenever a client connects to the server.
+        /// Invoked whenever a client connects to the server.当客户机连接到服务器时调用
         /// </summary>
         public event ConnectionEventHandler<TRead, TWrite> ClientConnected;
 
@@ -51,7 +52,7 @@ namespace NamedPipeWrapper
         public event ConnectionEventHandler<TRead, TWrite> ClientDisconnected;
 
         /// <summary>
-        /// Invoked whenever a client sends a message to the server.
+        /// Invoked whenever a client sends a message to the server.每当客户机向服务器发送消息时调用
         /// </summary>
         public event ConnectionMessageEventHandler<TRead, TWrite> ClientMessage;
 
@@ -80,7 +81,7 @@ namespace NamedPipeWrapper
         }
 
         /// <summary>
-        /// Begins listening for client connections in a separate background thread.
+        /// Begins listening for client connections in a separate background thread.开始在单独的后台线程中侦听客户机连接
         /// This method returns immediately.
         /// </summary>
         public void Start()
@@ -92,7 +93,7 @@ namespace NamedPipeWrapper
         }
 
         /// <summary>
-        /// Sends a message to all connected clients asynchronously.
+        /// Sends a message to all connected clients asynchronously.异步地向所有连接的客户机发送消息
         /// This method returns immediately, possibly before the message has been sent to all clients.
         /// </summary>
         /// <param name="message"></param>
@@ -168,21 +169,21 @@ namespace NamedPipeWrapper
             NamedPipeConnection<TRead, TWrite> connection = null;
 
             var connectionPipeName = GetNextConnectionPipeName(pipeName);
-
+            Console.WriteLine(connectionPipeName);
             try
             {
-                // Send the client the name of the data pipe to use
+                // Send the client the name of the data pipe to use将要使用的数据管道的名称发送给客户机
                 handshakePipe = PipeServerFactory.CreateAndConnectPipe(pipeName, pipeSecurity);
                 var handshakeWrapper = new PipeStreamWrapper<string, string>(handshakePipe);
                 handshakeWrapper.WriteObject(connectionPipeName);
                 handshakeWrapper.WaitForPipeDrain();
                 handshakeWrapper.Close();
 
-                // Wait for the client to connect to the data pipe
+                // Wait for the client to connect to the data pipe等待客户机连接到数据管道
                 dataPipe = PipeServerFactory.CreatePipe(connectionPipeName, pipeSecurity);
                 dataPipe.WaitForConnection();
 
-                // Add the client's connection to the list of connections
+                // Add the client's connection to the list of connections将客户端连接添加到连接列表中
                 connection = ConnectionFactory.CreateConnection<TRead, TWrite>(dataPipe);
                 connection.ReceiveMessage += ClientOnReceiveMessage;
                 connection.Disconnected += ClientOnDisconnected;
@@ -278,8 +279,10 @@ namespace NamedPipeWrapper
             return pipe;
         }
 
-        public static NamedPipeServerStream CreatePipe(string pipeName, PipeSecurity pipeSecurity)
+        public static NamedPipeServerStream CreatePipe(string pipeName, PipeSecurity pipeSecurity)//创建管道
         {
+            //Console.WriteLine(pipeName);
+
             return new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.WriteThrough, 0, 0, pipeSecurity);
         }
     }

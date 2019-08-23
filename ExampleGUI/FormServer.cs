@@ -13,7 +13,7 @@ namespace ExampleGUI
     public partial class FormServer : Form
     {
         private readonly NamedPipeServer<string> _server = new NamedPipeServer<string>(Constants.PIPE_NAME);
-        private readonly ISet<string> _clients = new HashSet<string>();
+        private readonly ISet<string> _clients = new HashSet<string>();//连接的client列表
 
         public FormServer()
         {
@@ -28,7 +28,7 @@ namespace ExampleGUI
             _server.ClientMessage += (client, message) => AddLine("<b>" + client.Name + "</b>: " + message);
             _server.Start();
         }
-
+        
         private void OnClientConnected(NamedPipeConnection<string, string> connection)
         {
             _clients.Add(connection.Name);

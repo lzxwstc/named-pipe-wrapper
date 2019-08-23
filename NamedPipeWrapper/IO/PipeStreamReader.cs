@@ -22,7 +22,7 @@ namespace NamedPipeWrapper.IO
         public PipeStream BaseStream { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether the pipe is connected or not.
+        /// Gets a value indicating whether the pipe is connected or not.获取一个值，该值指示管道是否连接
         /// </summary>
         public bool IsConnected { get; private set; }
 
@@ -41,7 +41,7 @@ namespace NamedPipeWrapper.IO
         #region Private stream readers
 
         /// <summary>
-        /// Reads the length of the next message (in bytes) from the client.
+        /// Reads the length of the next message (in bytes) from the client.从客户端读取下一条消息的长度(以字节为单位)。
         /// </summary>
         /// <returns>Number of bytes of data the client will be sending.</returns>
         /// <exception cref="InvalidOperationException">The pipe is disconnected, waiting to connect, or the handle has not been set.</exception>
@@ -75,7 +75,7 @@ namespace NamedPipeWrapper.IO
         #endregion
 
         /// <summary>
-        /// Reads the next object from the pipe.  This method blocks until an object is sent
+        /// Reads the next object from the pipe.  This method blocks until an object is sent(从管道中读取下一个对象。此方法阻塞，直到发送对象为止或者管道断开)
         /// or the pipe is disconnected.
         /// </summary>
         /// <returns>The next object read from the pipe, or <c>null</c> if the pipe disconnected.</returns>
@@ -83,6 +83,7 @@ namespace NamedPipeWrapper.IO
         public T ReadObject()
         {
             var len = ReadLength();
+            Console.WriteLine(len);
             return len == 0 ? default(T) : ReadObject(len);
         }
     }

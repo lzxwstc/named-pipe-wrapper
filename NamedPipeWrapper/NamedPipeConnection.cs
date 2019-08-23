@@ -12,9 +12,9 @@ using System.Collections.Concurrent;
 namespace NamedPipeWrapper
 {
     /// <summary>
-    /// Represents a connection between a named pipe client and server.
+    /// Represents a connection between a named pipe client and server.表示命名管道客户机和服务器之间的连接
     /// </summary>
-    /// <typeparam name="TRead">Reference type to read from the named pipe</typeparam>
+    /// <typeparam name="TRead">Reference type to read from the named pipe</typeparam>要从指定管道读取的引用类型
     /// <typeparam name="TWrite">Reference type to write to the named pipe</typeparam>
     public class NamedPipeConnection<TRead, TWrite>
         where TRead : class
@@ -36,12 +36,12 @@ namespace NamedPipeWrapper
         public bool IsConnected { get { return _streamWrapper.IsConnected; } }
 
         /// <summary>
-        /// Invoked when the named pipe connection terminates.
+        /// Invoked when the named pipe connection terminates.在命名管道连接终止时调用。
         /// </summary>
         public event ConnectionEventHandler<TRead, TWrite> Disconnected;
 
         /// <summary>
-        /// Invoked whenever a message is received from the other end of the pipe.
+        /// Invoked whenever a message is received from the other end of the pipe.每当从管道的另一端接收到消息时调用
         /// </summary>
         public event ConnectionMessageEventHandler<TRead, TWrite> ReceiveMessage;
 
@@ -54,7 +54,7 @@ namespace NamedPipeWrapper
 
         private readonly AutoResetEvent _writeSignal = new AutoResetEvent(false);
         /// <summary>
-        /// To support Multithread, we should use BlockingCollection.
+        /// To support Multithread, we should use BlockingCollection.为了支持多线程，我们应该使用BlockingCollection
         /// </summary>
         private readonly BlockingCollection<TWrite> _writeQueue = new BlockingCollection<TWrite>();
 
@@ -68,7 +68,7 @@ namespace NamedPipeWrapper
         }
 
         /// <summary>
-        /// Begins reading from and writing to the named pipe on a background thread.
+        /// Begins reading from and writing to the named pipe on a background thread.开始在后台线程上对命名管道进行读写
         /// This method returns immediately.
         /// </summary>
         public void Open()
@@ -86,7 +86,7 @@ namespace NamedPipeWrapper
 
         /// <summary>
         /// Adds the specified <paramref name="message"/> to the write queue.
-        /// The message will be written to the named pipe by the background thread
+        /// The message will be written to the named pipe by the background thread消息将由后台线程写入指定的管道
         /// at the next available opportunity.
         /// </summary>
         /// <param name="message"></param>
@@ -105,7 +105,7 @@ namespace NamedPipeWrapper
         }
 
         /// <summary>
-        ///     Invoked on the background thread.
+        ///     Invoked on the background thread.在后台线程上调用。
         /// </summary>
         private void CloseImpl()
         {
@@ -139,13 +139,14 @@ namespace NamedPipeWrapper
         }
 
         /// <summary>
-        ///     Invoked on the background thread.
+        ///     Invoked on the background thread.在后台线程上调用
         /// </summary>
         /// <exception cref="SerializationException">An object in the graph of type parameter <typeparamref name="TRead"/> is not marked as serializable.</exception>
         private void ReadPipe()
         {
-
+            
             while (IsConnected && _streamWrapper.CanRead)
+
             {
                 try
                 {
@@ -175,7 +176,7 @@ namespace NamedPipeWrapper
             
                 while (IsConnected && _streamWrapper.CanWrite)
                 {
-                    try
+                try
                     {
                         //using blockcollection, we needn't use singal to wait for result.
                         //_writeSignal.WaitOne();
@@ -205,9 +206,9 @@ namespace NamedPipeWrapper
             return new NamedPipeConnection<TRead, TWrite>(++_lastId, "Client " + _lastId, pipeStream);
         }
     }
-
+    
     /// <summary>
-    /// Handles new connections.
+    /// Handles new connections.处理新连接
     /// </summary>
     /// <param name="connection">The newly established connection</param>
     /// <typeparam name="TRead">Reference type</typeparam>
@@ -217,18 +218,18 @@ namespace NamedPipeWrapper
         where TWrite : class;
 
     /// <summary>
-    /// Handles messages received from a named pipe.
+    /// Handles messages received from a named pipe.处理从命名管道接收的消息
     /// </summary>
     /// <typeparam name="TRead">Reference type</typeparam>
     /// <typeparam name="TWrite">Reference type</typeparam>
     /// <param name="connection">Connection that received the message</param>
-    /// <param name="message">Message sent by the other end of the pipe</param>
+    /// <param name="message">Message sent by the other end of the pipe</param> 
     public delegate void ConnectionMessageEventHandler<TRead, TWrite>(NamedPipeConnection<TRead, TWrite> connection, TRead message)
         where TRead : class
         where TWrite : class;
 
     /// <summary>
-    /// Handles exceptions thrown during read/write operations.
+    /// Handles exceptions thrown during read/write operations.处理读/写操作期间抛出的异常
     /// </summary>
     /// <typeparam name="TRead">Reference type</typeparam>
     /// <typeparam name="TWrite">Reference type</typeparam>
